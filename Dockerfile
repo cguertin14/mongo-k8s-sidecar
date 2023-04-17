@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:lts-alpine
 
 WORKDIR /opt/cvallance/mongo-k8s-sidecar
 
