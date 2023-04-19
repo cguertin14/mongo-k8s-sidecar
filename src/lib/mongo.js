@@ -1,5 +1,4 @@
-var Db = require('mongodb').Db;
-var MongoServer = require('mongodb').Server;
+var { MongoClient } = require('mongodb');
 var async = require('async');
 var config = require('./config');
 
@@ -27,25 +26,18 @@ var getDb = function(host, done) {
     }
   }
 
-  var mongoDb = new Db(config.database, new MongoServer(host, config.mongoPort, mongoOptions));
+  var connectionURI;
+  if (config.username) {
+    connectionURI = `mongodb://${encodeURIComponent(config.username)}:${encodeURIComponent(config.password)}@${host}:${config.mongoPort}/${config.database}`;
+  } else {
+    connectionURI = `mongodb://${host}:${config.mongoPort}/${config.database}`;
+  }
 
-  mongoDb.open(function (err, db) {
+  MongoClient.connect(connectionURI, mongoOptions, function(err, db) {
     if (err) {
       return done(err);
     }
-
-    if(config.username) {
-        mongoDb.authenticate(config.username, config.password, function(err, result) {
-            if (err) {
-              return done(err);
-            }
-
-            return done(null, db);
-        });
-    } else {
-      return done(null, db);
-    }
-
+    return done(null, db);
   });
 };
 
