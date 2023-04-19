@@ -20,9 +20,9 @@ var getDb = function(host, done) {
 
   if (config.mongoSSLEnabled) {
     mongoOptions = {
-      ssl: config.mongoSSLEnabled,
-      sslAllowInvalidCertificates: config.mongoSSLAllowInvalidCertificates,
-      sslAllowInvalidHostnames: config.mongoSSLAllowInvalidHostnames
+      tls: config.mongoSSLEnabled,
+      tlsAllowInvalidCertificates: config.mongoSSLAllowInvalidCertificates,
+      tlsAllowInvalidHostnames: config.mongoSSLAllowInvalidHostnames
     }
   }
 
@@ -33,12 +33,10 @@ var getDb = function(host, done) {
     connectionURI = `mongodb://${host}:${config.mongoPort}/${config.database}`;
   }
 
-  MongoClient.connect(connectionURI, mongoOptions, function(err, db) {
-    if (err) {
-      return done(err);
-    }
-    return done(null, db);
-  });
+  let client = new MongoClient(connectionURI, mongoOptions);
+  client.connect()
+    .then(db => { return done(null, db); })
+    .catch(err => { return done(err); });
 };
 
 var replSetGetConfig = function(db, done) {
