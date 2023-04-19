@@ -28,9 +28,9 @@ var getDb = function(host, done) {
 
   var connectionURI;
   if (config.username) {
-    connectionURI = `mongodb://${encodeURIComponent(config.username)}:${encodeURIComponent(config.password)}@${host}:${config.mongoPort}/${config.database}`;
+    connectionURI = `mongodb://${encodeURIComponent(config.username)}:${encodeURIComponent(config.password)}@${host}:${config.mongoPort}/${config.database}?directConnection=true`;
   } else {
-    connectionURI = `mongodb://${host}:${config.mongoPort}/${config.database}`;
+    connectionURI = `mongodb://${host}:${config.mongoPort}/${config.database}?directConnection=true`;
   }
 
   let client = new MongoClient(connectionURI, mongoOptions);
